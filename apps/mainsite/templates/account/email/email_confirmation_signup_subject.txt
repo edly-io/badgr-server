@@ -1,4 +1,4 @@
 {% load i18n %}
 {% autoescape off %}
-{% blocktrans %}Bestätige Deinen myBadges Account{% endblocktrans %}
+{% blocktrans %}Confirm Your myBadges Account{% endblocktrans %}
 {% endautoescape %}

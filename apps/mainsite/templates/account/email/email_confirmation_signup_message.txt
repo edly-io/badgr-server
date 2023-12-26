@@ -1,9 +1,9 @@
-Bitte verifiziere Deine Email-Adresse auf myBadges, 
+Please verify your email address on myBadges,
 {{ email.email }}
 
-Bestätige Deine Email-Adresse, um Deinen myBadges Account zu aktivieren.
-Klicke auf den Link oder kopiere ihn in die Adresszeile Deines Browsers.
+Confirm your email address to activate your myBadges account.
+Click the link or copy it into the address bar of your browser.
 
 {{ activate_url }}
 
-Wenn Du das nicht angefragt hast, dann kannst Du diese Email sicher ignorieren, und es wird nichts weiter passieren. 
+If you did not request this, you can safely ignore this email, and nothing further will happen.
