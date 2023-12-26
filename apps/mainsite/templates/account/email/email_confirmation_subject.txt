@@ -1,4 +1,4 @@
 {% load i18n %}
 {% autoescape off %}
-{% blocktrans %}Bestätige Deine OpenEducationalBadges Email-Addresse{% endblocktrans %}
+{% blocktrans %}Confirm Your myBadges Email Address{% endblocktrans %}
 {% endautoescape %}

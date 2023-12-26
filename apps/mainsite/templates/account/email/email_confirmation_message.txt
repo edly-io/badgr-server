@@ -1,10 +1,10 @@
-Bitte bestätige Deine Email-Adresse auf OpenEducationalBadges,
+Please confirm your email address on myBadges,
 {{ email.email }}
 
-Ein*e OpenEducationalBadges Nutzer*in hat angefragt diese Email-Adresse zu ihrem/seinem Account hinzuzufügen oder sie in einer verknüpften Anwendung zu nutzen.
-Wenn bestätigt, kannst Du Badges zu Deinem OpenEducationalBadges Account hinzufügen, die zu dieser Adresse ausgestellt wurden oder features in verknüpften Anwendungen nutzen.
+A myBadges user has requested to add this email address to their account or use it in a linked application.
+If confirmed, you can add badges to your myBadges account that were issued for this email address or use features within linked applications.
 
 {{ activate_url }}
 
-Wenn Du dies nicht angefragt hast, kannst Du sicher diese Email ignorieren und 
-es wird nichts weiter passieren. 
+If you did not make this request, you can safely ignore this email, and
+nothing further will happen.

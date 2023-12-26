@@ -1,5 +1,5 @@
 ***************************************************
-Herzlichen Glückwunsch, Du hast einen Badge erhalten! 
+Congratulations, you have received a badge!
 ***************************************************
 
 {{ badge_name }}
@@ -8,7 +8,7 @@ Herzlichen Glückwunsch, Du hast einen Badge erhalten!
 {{ badge_description }}
 
 ---------
-Dieses Badge wurde vergeben von:
+This badge was awarded by:
 ---------
 
 {{ issuer_name }}
@@ -18,39 +18,39 @@ Dieses Badge wurde vergeben von:
 Download
 ----------
 
-Speicher dieses Badge Bild für Deine Unterlagen oder zum Hochladen in einen Open Badges-kompatiblen Dienst:
+Save this badge image for your records or upload it to an Open Badges-compatible service:
 {{ download_url }}
 
 ----------
-Badge Speicherung und Zugriff
+Badge Storage and Access
 ----------
 
-Wohin auch immer Du Dein Badge mitnimmst, Informationen über Deine Leistung werden
-darin kodiert sein. Du kannst jeden Open Badges Rucksackservice nutzen, aber wenn Du 
-einen {{ site_name }} ( {{ site_url }} ) Account erstellst, werden die von dieser Institution vergebenen Badges
-automatisch hinzugefügt.
+Wherever you take your badge, information about your achievement will be
+encoded within it. You can use any Open Badges backpack service, but if you
+create a {{ site_name }} ( {{ site_url }} ) account, badges awarded by this institution
+will be automatically added.
+
 {% if GDPR_INFO_URL %}
 -----------
-Kenne Deine Rechte
+Know Your Rights
 -----------
-Die Institution, die dieses Abzeichen vergibt, hat {{ site_name }} Deine E-Mail-Adresse und die
-Daten über Deine Leistung, die in diesem Badge enthalten sind, bereitgestellt. Wenn Du Fragen zu diesem Badge hast,
-kontaktiere die ausstellende Institution unter {{ issuer_email }}. Du kannst auch eine Kopie Deiner Daten anfordern, 
-die Entfernung der Daten über Dich oder die Aktualisierung falscher Informationen. Erfahre mehr unter
+The institution awarding this badge has provided {{ site_name }} with your email address and the
+data about your achievement contained in this badge. If you have questions about this badge,
+contact the issuing institution at {{ issuer_email }}. You can also request a copy of your data,
+the removal of data about you, or the updating of incorrect information. Learn more at
 {{ GDPR_INFO_URL }}
 {% endif %}
 -----------
-Open Badges: Übertragbare Digitale Abzeichen
+Open Badges: Portable Digital Badges
 -----------
 
+Open Badges allow you to take badges from the many places you learn.
+Combine them to tell a coherent story about your learning.
 
-Open Badges ermöglichen Dir Abzeichen von den vielen Orten mitzunehmen, wo Du lernst.
-Kombinieren sie, um eine zusammenhängende Geschichte über Dein Lernen zu erzählen.
+Learn more at http://openbadges.org
 
-Erfahre mehr unter http://openbadges.org
-
-Abmelden: Wenn Du nicht über zukünftige Vergaben von Badges von diesem Dienst informiert werden möchtest, 
-klicke auf den folgenden Link:
+Unsubscribe: If you do not wish to be notified about future badge awards from this service,
+click the following link:
 {{ unsubscribe_url }}
 
 {% if PRIVACY_POLICY_URL %}Privacy Policy: {{ PRIVACY_POLICY_URL }}{% endif %}
