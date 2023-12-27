@@ -46,6 +46,8 @@ INSTALLED_APPS = [
     # OAuth 2 provider
     'oauth2_provider',
 
+    'social_django',
+
     'entity',
     'issuer',
     'backpack',
@@ -155,6 +157,9 @@ AUTHENTICATION_BACKENDS = [
 
     # `allauth` specific authentication methods, such as login by e-mail
     "badgeuser.backends.CachedAuthenticationBackend"
+
+    'auth_backends.backends.EdXOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
 
 ]
 
@@ -502,3 +507,6 @@ SAML_LAST_NAME_KEYS = ['LastName', 'sn', 'surname', 'http://schemas.xmlsoap.org/
 # You may use an HTTP service to convert SVG images to PNG for higher reliability than the built-in Python option.
 SVG_HTTP_CONVERSION_ENABLED = False
 SVG_HTTP_CONVERSION_ENDPOINT = ''  # Include scheme, e.g. 'http://example.com/convert-to-png'
+
+SOCIAL_AUTH_EDX_OAUTH2_KEY=''
+SOCIAL_AUTH_EDX_OAUTH2_SECRET=''

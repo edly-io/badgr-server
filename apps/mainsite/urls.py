@@ -24,7 +24,10 @@ from mainsite.views import info_view, email_unsubscribe, AppleAppSiteAssociation
 from mainsite.views import upload, nounproject
 from django.conf.urls.static import static
 
-urlpatterns = [
+from auth_backends.urls import oauth2_urlpatterns
+
+
+urlpatterns = oauth2_urlpatterns + [
     # Backup URLs in case the server isn't serving these directly
     url(r'^favicon\.png[/]?$', RedirectView.as_view(url='%simages/favicon.png' % settings.STATIC_URL, permanent=True)),
     url(r'^favicon\.ico[/]?$', RedirectView.as_view(url='%simages/favicon.png' % settings.STATIC_URL, permanent=True)),
