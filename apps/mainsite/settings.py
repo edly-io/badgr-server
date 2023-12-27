@@ -45,6 +45,8 @@ INSTALLED_APPS = [
     # OAuth 2 provider
     'oauth2_provider',
 
+    'social_django',
+
     'entity',
     'issuer',
     'backpack',
@@ -158,6 +160,9 @@ AUTHENTICATION_BACKENDS = [
 
     # `allauth` specific authentication methods, such as login by e-mail
     "badgeuser.backends.CachedAuthenticationBackend"
+
+    'auth_backends.backends.EdXOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
 
 ]
 
@@ -544,3 +549,28 @@ CORS_ALLOW_CREDENTIALS = True
 
 LMS_HOST_URL = ''
 BADGR_UI_HOST_URL = ''
+
+SOCIAL_AUTH_EDX_OAUTH2_KEY = ''
+SOCIAL_AUTH_EDX_OAUTH2_SECRET = ''
+SOCIAL_AUTH_EDX_OAUTH2_URL_ROOT = ''
+SOCIAL_AUTH_EDX_OAUTH2_PUBLIC_URL_ROOT = ''
+SOCIAL_AUTH_EDX_OAUTH2_LOGOUT_URL = ''
+
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+    'use-jwt-cookie',
+]
+
+CORS_ALLOW_CREDENTIALS = True
+
+LMS_HOST_URL = ''

@@ -22,7 +22,10 @@ def django2_include(three_tuple_urlconf):
     return include((urls, app_name), namespace=namespace)
 
 
-urlpatterns = [
+from auth_backends.urls import oauth2_urlpatterns
+
+
+urlpatterns = oauth2_urlpatterns + [
     # Backup URLs in case the server isn't serving these directly
     url(r'^favicon\.png[/]?$',
         RedirectView.as_view(url='%simages/favicon.png' % settings.STATIC_URL,
