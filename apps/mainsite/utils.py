@@ -23,6 +23,8 @@ from rest_framework.exceptions import UnsupportedMediaType
 from django.urls import get_callable
 from django.http import HttpResponse
 from django.utils import timezone
+from oauthlib.oauth2.rfc6749.tokens import BearerToken
+from oauth2_provider.settings import oauth2_settings as dot_settings
 
 from PIL import Image
 
@@ -479,3 +481,46 @@ def convert_svg_to_png(svg_string, height, width):
     except ValueError:
         # Issuing decoding response JSON
         return False
+
+
+def get_expires_in_value(expires_in):
+    """
+    Returns the expires_in value to use for the token.
+    """
+    return 86000
+
+
+def populate_create_access_token_request(request, user, client, scopes):
+    """
+    django-oauth-toolkit expects certain non-standard attributes to
+    be present on the request object.  This function modifies the
+    request object to match these expectations
+    """
+    request.user = user
+    request.client = client
+    request.scopes = scopes or ''
+    request.state = None
+    request.refresh_token = None
+    request.extra_credentials = None
+    request.grant_type = client.authorization_grant_type
+
+
+def create_dot_access_token(request, user, client, expires_in=None, scopes=None):
+    """
+    Create and return a new (persisted) access token, including a refresh token.
+    The token is returned in the form of a Dict:
+        {
+            u'access_token': u'some string',
+            u'refresh_token': u'another string',
+            u'token_type': u'Bearer',
+            u'expires_in': 36000,
+            u'scope': u'profile email',
+        },
+    """
+    expires_in = get_expires_in_value(expires_in)
+    token_generator = BearerToken(
+        expires_in=expires_in,
+        request_validator=dot_settings.OAUTH2_VALIDATOR_CLASS(),
+    )
+    populate_create_access_token_request(request, user, client, scopes)
+    return token_generator.create_token(request, refresh_token=True)

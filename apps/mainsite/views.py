@@ -35,8 +35,12 @@ import uuid
 from django.http import JsonResponse
 import requests
 from requests_oauthlib import OAuth1
-
-logger = badgrlog.BadgrLogger()
+from badgrsocialauth.providers.oauth2_idtoken.dot_adapter import DOTAdapter
+from .utils import create_dot_access_token
+from django.shortcuts import redirect
+from django.contrib.auth.decorators import login_required
+from badgeuser.models import BadgeUser
+import jwt
 
 
 
@@ -54,6 +58,56 @@ def error404(request, *args, **kwargs):
     return HttpResponseNotFound(template.render({
         'STATIC_URL': getattr(settings, 'STATIC_URL', '/static/'),
     }))
+
+
+@login_required
+def frontend_redirect(request):
+    return redirect('http://badgr-ui.local.overhang.io:4000/')
+
+
+def authenticate_lms_user(request):
+    token = request.headers.get('Authorization')
+
+    if not token:
+        return False
+    
+    user = None
+    
+    try:
+        # decoded_token = jwt.decode(token, algorithms=['RS512'])
+        decoded_data = jwt.decode(token, options={"verify_signature": False})
+        email = decoded_data.get('email')
+        if not email:
+            return 
+                
+        return BadgeUser.objects.filter(email=email).first()
+    except jwt.ExpiredSignatureError as e:
+        logger.event(e)
+        return JsonResponse({'valid': False, 'error': 'Token has expired'})
+    except jwt.InvalidTokenError as e:
+        logger.event(e)
+        return JsonResponse({'valid': False, 'error': 'Invalid token'})
+    except Exception as e:
+        logger.event(e)
+    
+
+class LMSTokenAuthnticater(APIView):
+    permission_classes = (AllowAny,)
+    
+    def post(self, request):
+        user = authenticate_lms_user(request=request)
+
+        if not user:
+            return JsonResponse(data={'error': 'In valid request'}, status=400)
+
+        oauth2_adapter = DOTAdapter()
+        client = oauth2_adapter.get_client(client_id=request.data.get("client_id", "efD1IRBDwEFJZf4l2EDupx4FVAmvLK1aGBqITmUd"))
+        tokens = create_dot_access_token(request, user, client, scopes=['rw:profile', 'rw:issuer', 'rw:backpack'])
+        
+        return JsonResponse(data=tokens, status=200)
+    
+    def get_queryset(self):
+        return BadgrApp.objects.all()
 
 
 @xframe_options_exempt

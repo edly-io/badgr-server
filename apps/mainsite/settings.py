@@ -46,8 +46,6 @@ INSTALLED_APPS = [
     # OAuth 2 provider
     'oauth2_provider',
 
-    'social_django',
-
     'entity',
     'issuer',
     'backpack',
@@ -58,6 +56,8 @@ INSTALLED_APPS = [
 
     # deprecated
     'composition',
+
+    'social_django',
 ]
 
 MIDDLEWARE = [
@@ -72,6 +72,7 @@ MIDDLEWARE = [
     'mainsite.middleware.XframeExempt500Middleware',
     'mainsite.middleware.MaintenanceMiddleware',
     'badgeuser.middleware.InactiveUserMiddleware',
+    'social_django.middleware.SocialAuthExceptionMiddleware',
     # 'mainsite.middleware.TrailingSlashMiddleware',
 ]
 
@@ -144,7 +145,7 @@ STATICFILES_DIRS = [
 
 AUTH_USER_MODEL = 'badgeuser.BadgeUser'
 LOGIN_URL = '/accounts/login/'
-LOGIN_REDIRECT_URL = '/docs'
+LOGIN_REDIRECT_URL = '/frontend-redirect/'
 
 AUTHENTICATION_BACKENDS = [
     'oauth2_provider.backends.OAuth2Backend',
@@ -156,7 +157,7 @@ AUTHENTICATION_BACKENDS = [
     "badgeuser.backends.CachedModelBackend",
 
     # `allauth` specific authentication methods, such as login by e-mail
-    "badgeuser.backends.CachedAuthenticationBackend"
+    "badgeuser.backends.CachedAuthenticationBackend",
 
     'auth_backends.backends.EdXOAuth2',
     'django.contrib.auth.backends.ModelBackend',
@@ -508,5 +509,8 @@ SAML_LAST_NAME_KEYS = ['LastName', 'sn', 'surname', 'http://schemas.xmlsoap.org/
 SVG_HTTP_CONVERSION_ENABLED = False
 SVG_HTTP_CONVERSION_ENDPOINT = ''  # Include scheme, e.g. 'http://example.com/convert-to-png'
 
-SOCIAL_AUTH_EDX_OAUTH2_KEY=''
-SOCIAL_AUTH_EDX_OAUTH2_SECRET=''
+SOCIAL_AUTH_EDX_OAUTH2_KEY = ''
+SOCIAL_AUTH_EDX_OAUTH2_SECRET = ''
+SOCIAL_AUTH_EDX_OAUTH2_URL_ROOT = ''
+SOCIAL_AUTH_EDX_OAUTH2_PUBLIC_URL_ROOT = ''
+SOCIAL_AUTH_EDX_OAUTH2_LOGOUT_URL = ''
