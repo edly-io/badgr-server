@@ -43,6 +43,8 @@ from badgeuser.models import BadgeUser
 import jwt
 
 
+import logging;
+logger = logging.getLogger(__name__)
 
 ##
 #
@@ -71,24 +73,32 @@ def authenticate_lms_user(request):
     if not token:
         return False
     
-    user = None
-    
     try:
-        # decoded_token = jwt.decode(token, algorithms=['RS512'])
         decoded_data = jwt.decode(token, options={"verify_signature": False})
         email = decoded_data.get('email')
         if not email:
             return 
-                
+
+        url = "http://local.overhang.io:8000/api/badges/v1//verify-lms-token/"
+
+        headers = {
+        'Content-Type': 'application/json',
+        'token': token
+        }
+
+        response = requests.request("POST", url, headers=headers, data={})
+        if response.status_code != 200:
+            return
+
         return BadgeUser.objects.filter(email=email).first()
     except jwt.ExpiredSignatureError as e:
-        logger.event(e)
+        logger.info(e)
         return JsonResponse({'valid': False, 'error': 'Token has expired'})
     except jwt.InvalidTokenError as e:
-        logger.event(e)
+        logger.info(e)
         return JsonResponse({'valid': False, 'error': 'Invalid token'})
     except Exception as e:
-        logger.event(e)
+        logger.info(e)
     
 
 class LMSTokenAuthnticater(APIView):
