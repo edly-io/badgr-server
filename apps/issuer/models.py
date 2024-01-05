@@ -469,7 +469,8 @@ class Issuer(ResizeUploadedImage,
             # 'badge_instance_url': self.public_url,
             # 'image_url': self.public_url + '/image?type=png',
             # 'download_url': self.public_url + "?action=download",
-            'site_name': "mybadges.org"
+            'site_name': "mybadges.org",
+            'site_url': settings.BADGR_BASE_URL,
             # 'badgr_app': badgr_app
         }
 
