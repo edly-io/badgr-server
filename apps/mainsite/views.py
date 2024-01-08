@@ -13,6 +13,7 @@ from django.template.exceptions import TemplateDoesNotExist
 from django.utils.decorators import method_decorator
 from django.views.decorators.clickjacking import xframe_options_exempt
 from django.views.generic import FormView, RedirectView
+from oauth2_provider.views import TokenView as OAuth2ProviderTokenView
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.renderers import JSONRenderer
@@ -21,6 +22,8 @@ from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.decorators import permission_classes, authentication_classes, api_view
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
+from urllib.parse import quote
+import jwt
 
 from issuer.tasks import rebake_all_assertions, update_issuedon_all_assertions
 from mainsite.admin_actions import clear_cache
@@ -35,12 +38,10 @@ import uuid
 from django.http import JsonResponse
 import requests
 from requests_oauthlib import OAuth1
-from badgrsocialauth.providers.oauth2_idtoken.dot_adapter import DOTAdapter
-from .utils import create_dot_access_token
+from .utils import generate_random_password
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
 from badgeuser.models import BadgeUser
-import jwt
 
 
 import logging;
@@ -64,7 +65,7 @@ def error404(request, *args, **kwargs):
 
 @login_required
 def frontend_redirect(request):
-    return redirect('http://badgr-ui.local.overhang.io:4000/')
+    return redirect(f'{settings.BADGR_UI_HOST_URL}/public/start/?is-lms-redirect=true')
 
 
 def authenticate_lms_user(request):
@@ -79,14 +80,13 @@ def authenticate_lms_user(request):
         if not email:
             return 
 
-        url = "http://local.overhang.io:8000/api/badges/v1//verify-lms-token/"
-
+        url = f'{settings.LMS_HOST_URL}/api/badges/v1/verify-lms-token/'
         headers = {
         'Content-Type': 'application/json',
         'token': token
         }
-
         response = requests.request("POST", url, headers=headers, data={})
+
         if response.status_code != 200:
             return
 
@@ -101,20 +101,22 @@ def authenticate_lms_user(request):
         logger.info(e)
     
 
-class LMSTokenAuthnticater(APIView):
+class LMSTokenAuthnticater(OAuth2ProviderTokenView):
     permission_classes = (AllowAny,)
     
-    def post(self, request):
+    def post(self, request, *args, **kwargs):
         user = authenticate_lms_user(request=request)
 
         if not user:
-            return JsonResponse(data={'error': 'In valid request'}, status=400)
+            return JsonResponse(data={'error': 'Invalid request'}, status=400)
 
-        oauth2_adapter = DOTAdapter()
-        client = oauth2_adapter.get_client(client_id=request.data.get("client_id", "efD1IRBDwEFJZf4l2EDupx4FVAmvLK1aGBqITmUd"))
-        tokens = create_dot_access_token(request, user, client, scopes=['rw:profile', 'rw:issuer', 'rw:backpack'])
-        
-        return JsonResponse(data=tokens, status=200)
+        password = generate_random_password()
+        user.set_password(password)
+        user.save()
+
+        request._body = f'{request.body.decode()}&username={quote(user.username)}&password={quote(password)}'
+
+        return super(LMSTokenAuthnticater, self).post(request, *args, **kwargs)
     
     def get_queryset(self):
         return BadgrApp.objects.all()
