@@ -65,7 +65,12 @@ def error404(request, *args, **kwargs):
 
 @login_required
 def frontend_redirect(request):
-    return redirect(f'{settings.BADGR_UI_HOST_URL}/public/start/?is-lms-redirect=true')
+    url = f'{settings.BADGR_UI_HOST_URL}/public/start/?is-lms-redirect=true'
+    
+    secret = request.COOKIES.get('edx-jwt-cookie-signature')
+    url = f'{url}&secret={secret}' if secret else url
+
+    return redirect(url)
 
 
 def authenticate_lms_user(request):
