@@ -117,10 +117,11 @@ class LMSTokenAuthnticater(OAuth2ProviderTokenView):
         if not user:
             return JsonResponse(data={'error': 'Invalid request'}, status=400)
         
-        user_email = EmailAddress.objects.get_or_create(email=user.email, user=user)[0]
-        user_email.verified = True
-        user_email.primary = True
-        user_email.save()
+        user_email, is_created = EmailAddress.objects.get_or_create(email=user.email, user=user)
+        if is_created:
+            user_email.verified = True
+            user_email.primary = True
+            user_email.save()
 
         password = generate_random_password()
         user.set_password(password)
