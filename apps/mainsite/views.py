@@ -1,6 +1,8 @@
 import base64
 import time
 
+
+from allauth.account.models import EmailAddress
 from django import forms
 from django.conf import settings
 from django.contrib.admin.views.decorators import staff_member_required
@@ -114,6 +116,12 @@ class LMSTokenAuthnticater(OAuth2ProviderTokenView):
 
         if not user:
             return JsonResponse(data={'error': 'Invalid request'}, status=400)
+        
+        user_email, is_created = EmailAddress.objects.get_or_create(email=user.email, user=user)
+        if is_created:
+            user_email.verified = True
+            user_email.primary = True
+            user_email.save()
 
         password = generate_random_password()
         user.set_password(password)
