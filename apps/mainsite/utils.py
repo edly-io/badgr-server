@@ -11,6 +11,8 @@ import puremagic
 import math
 import re
 import requests
+import secrets
+import string
 import urllib.request, urllib.parse, urllib.error
 import urllib.parse
 import uuid
@@ -23,6 +25,8 @@ from rest_framework.exceptions import UnsupportedMediaType
 from django.urls import get_callable
 from django.http import HttpResponse
 from django.utils import timezone
+from oauthlib.oauth2.rfc6749.tokens import BearerToken
+from oauth2_provider.settings import oauth2_settings as dot_settings
 
 from PIL import Image
 
@@ -479,3 +483,13 @@ def convert_svg_to_png(svg_string, height, width):
     except ValueError:
         # Issuing decoding response JSON
         return False
+
+
+def generate_random_password(length=12):
+    # Define the characters to include in the password
+    characters = string.ascii_letters + string.digits + string.punctuation
+
+    # Generate a random password using secrets.choice
+    password = ''.join(secrets.choice(characters) for _ in range(length))
+
+    return password

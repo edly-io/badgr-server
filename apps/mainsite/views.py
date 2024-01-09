@@ -13,6 +13,7 @@ from django.template.exceptions import TemplateDoesNotExist
 from django.utils.decorators import method_decorator
 from django.views.decorators.clickjacking import xframe_options_exempt
 from django.views.generic import FormView, RedirectView
+from oauth2_provider.views import TokenView as OAuth2ProviderTokenView
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.renderers import JSONRenderer
@@ -21,6 +22,8 @@ from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.decorators import permission_classes, authentication_classes, api_view
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
+from urllib.parse import quote
+import jwt
 
 from issuer.tasks import rebake_all_assertions, update_issuedon_all_assertions
 from mainsite.admin_actions import clear_cache
@@ -35,10 +38,14 @@ import uuid
 from django.http import JsonResponse
 import requests
 from requests_oauthlib import OAuth1
+from .utils import generate_random_password
+from django.shortcuts import redirect
+from django.contrib.auth.decorators import login_required
+from badgeuser.models import BadgeUser
 
-logger = badgrlog.BadgrLogger()
 
-
+import logging;
+logger = logging.getLogger(__name__)
 
 ##
 #
@@ -54,6 +61,70 @@ def error404(request, *args, **kwargs):
     return HttpResponseNotFound(template.render({
         'STATIC_URL': getattr(settings, 'STATIC_URL', '/static/'),
     }))
+
+
+@login_required
+def frontend_redirect(request):
+    url = f'{settings.BADGR_UI_HOST_URL}/public/start/?is-lms-redirect=true'
+    
+    secret = request.COOKIES.get('edx-jwt-cookie-signature')
+    url = f'{url}&secret={secret}' if secret else url
+
+    return redirect(url)
+
+
+def authenticate_lms_user(request):
+    token = request.headers.get('Authorization')
+
+    if not token:
+        return False
+    
+    try:
+        decoded_data = jwt.decode(token, options={"verify_signature": False})
+        email = decoded_data.get('email')
+        if not email:
+            return 
+
+        url = f'{settings.LMS_HOST_URL}/api/badges/v1/verify-lms-token/'
+        headers = {
+        'Content-Type': 'application/json',
+        'token': token
+        }
+        response = requests.request("POST", url, headers=headers, data={})
+
+        if response.status_code != 200:
+            return
+
+        return BadgeUser.objects.filter(email=email).first()
+    except jwt.ExpiredSignatureError as e:
+        logger.info(e)
+        return JsonResponse({'valid': False, 'error': 'Token has expired'})
+    except jwt.InvalidTokenError as e:
+        logger.info(e)
+        return JsonResponse({'valid': False, 'error': 'Invalid token'})
+    except Exception as e:
+        logger.info(e)
+    
+
+class LMSTokenAuthnticater(OAuth2ProviderTokenView):
+    permission_classes = (AllowAny,)
+    
+    def post(self, request, *args, **kwargs):
+        user = authenticate_lms_user(request=request)
+
+        if not user:
+            return JsonResponse(data={'error': 'Invalid request'}, status=400)
+
+        password = generate_random_password()
+        user.set_password(password)
+        user.save()
+
+        request._body = f'{request.body.decode()}&username={quote(user.username)}&password={quote(password)}'
+
+        return super(LMSTokenAuthnticater, self).post(request, *args, **kwargs)
+    
+    def get_queryset(self):
+        return BadgrApp.objects.all()
 
 
 @xframe_options_exempt

@@ -24,7 +24,12 @@ from mainsite.views import info_view, email_unsubscribe, AppleAppSiteAssociation
 from mainsite.views import upload, nounproject
 from django.conf.urls.static import static
 
-urlpatterns = [
+from auth_backends.urls import oauth2_urlpatterns
+
+from .views import frontend_redirect, LMSTokenAuthnticater
+
+
+urlpatterns = oauth2_urlpatterns + [
     # Backup URLs in case the server isn't serving these directly
     url(r'^favicon\.png[/]?$', RedirectView.as_view(url='%simages/favicon.png' % settings.STATIC_URL, permanent=True)),
     url(r'^favicon\.ico[/]?$', RedirectView.as_view(url='%simages/favicon.png' % settings.STATIC_URL, permanent=True)),
@@ -42,6 +47,9 @@ urlpatterns = [
     url(r'^o/code/?$', AuthCodeExchange.as_view(), name='oauth2_code_exchange'),
     url(r'^o/register/?$', RegisterApiView.as_view(), kwargs={'version': 'rfc7591'}, name='oauth2_api_register'),
     path('o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
+
+    url('frontend-redirect/', frontend_redirect, name='frontend_redirect'),
+    url('authenticate_lms_token/', LMSTokenAuthnticater.as_view(), name='authenticate_lms_token'),
 
     # Badge Connect URLs
     url(r'^bcv1/manifest/(?P<domain>[^/]+)$', BadgeConnectManifestView.as_view(), name='badge_connect_manifest'),
