@@ -2,7 +2,6 @@ Please confirm your email address on myBadges,
 {{ email.email }}
 
 A myBadges user has requested to add this email address to their account or use it in a linked application.
-If confirmed, you can add badges to your myBadges account that were issued for this email address or use features within linked applications.
 
 {{ activate_url }}
 
