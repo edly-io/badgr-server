@@ -26,7 +26,7 @@ from django.conf.urls.static import static
 
 from auth_backends.urls import oauth2_urlpatterns
 
-from .views import frontend_redirect, LMSTokenAuthnticater
+from .views import frontend_redirect, LMSTokenAuthnticater, BadgrSessionAuthnticater
 
 
 urlpatterns = oauth2_urlpatterns + [
