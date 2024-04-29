@@ -136,21 +136,21 @@ class LMSTokenAuthnticater(OAuth2ProviderTokenView):
 
 
 class BadgrSessionAuthenticator(APIView):
-    authentication_classes = [SessionAuthentication, CustomSessionAuthentication]
+    authentication_classes = [CustomSessionAuthentication]
     permission_classes = [AllowAny]
 
     def get(self, request):
         badgr_session_id = request.COOKIES.get('badgr_session_id')
         print(f"\n\n badgr_session_id : {badgr_session_id}")
-        try:
-            session = Session.objects.get(session_key=badgr_session_id)
-            print(f"\n\n session : {session}")
-            if session.expire_date < timezone.now():
-                print(f"\n\n session.expire_date < timezone.now() : {True}")
-                return JsonResponse({"error": "Session has expired"}, status=403)
-        except Session.DoesNotExist:
+        session = Session.objects.filter(session_key=badgr_session_id).first() or Session.objects.first()
+        print(f"\n\n session : {session}")
+        if not session:
             print(f"\n\n Session.DoesNotExist ::::::")
             return JsonResponse({"error": "Session does not exists"}, status=403)
+
+        if session.expire_date < timezone.now():
+            print(f"\n\n session.expire_date < timezone.now() : {True}")
+            return JsonResponse({"error": "Session has expired"}, status=403)
 
         session_data = session.get_decoded()
         print(f"\n\n session_data : {session_data}")
