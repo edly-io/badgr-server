@@ -73,7 +73,7 @@ def frontend_redirect(request):
     secret = request.COOKIES.get('edx-jwt-cookie-signature')
     url = f'{url}&secret={secret}' if secret else url
     badgr_session_id = request.COOKIES.get('badgr_session_id')
-    url = f'{url}&si=true' if badgr_session_id else url
+    url = f'{url}&si={badgr_session_id}' if badgr_session_id else url
 
     return redirect(url)
 
