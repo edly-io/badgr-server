@@ -159,6 +159,9 @@ AUTHENTICATION_BACKENDS = [
     # `allauth` specific authentication methods, such as login by e-mail
     "badgeuser.backends.CachedAuthenticationBackend",
 
+     # `allauth` specific authentication methods, such as authenticate by session
+    "badgeuser.backends.CustomSessionAuthentication",
+
     'auth_backends.backends.EdXOAuth2',
     'django.contrib.auth.backends.ModelBackend',
 

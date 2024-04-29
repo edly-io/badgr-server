@@ -44,6 +44,7 @@ from .utils import generate_random_password
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
 from badgeuser.models import BadgeUser
+from badgeuser.backends import CustomSessionAuthentication
 
 
 import logging;
@@ -131,30 +132,6 @@ class LMSTokenAuthnticater(OAuth2ProviderTokenView):
         request._body = f'{request.body.decode()}&username={quote(user.username)}&password={quote(password)}'
 
         return super(LMSTokenAuthnticater, self).post(request, *args, **kwargs)
-
-
-from django.contrib.auth.backends import BaseBackend
-from django.contrib.sessions.models import Session
-class CustomSessionAuthentication(BaseBackend):
-    """
-    Authenticates the user using session.
-    """
-
-    def authenticate(self, request, username=None, password=None):
-        badgr_session_id = request.COOKIES.get('badgr_session_id')
-        try:
-            session = Session.objects.get(session_key=badgr_session_id)
-            if session.expire_date < timezone.now():
-                return None
-        except Session.DoesNotExist:
-            return None
-
-        session_data = session.get_decoded()
-        try:
-            user = BadgeUser.objects.filter(id=session_data["_auth_user_id"]).first()
-            return user
-        except BadgeUser.DoesNotExist:
-            return None
 
 
 class BadgrSessionAuthenticator(APIView):
