@@ -139,19 +139,19 @@ class BadgrSessionAuthenticator(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request):
-        # badgr_session_id = request.COOKIES.get('badgr_session_id')
-        # try:
-        #     session = Session.objects.get(session_key=badgr_session_id)
-        #     if session.expire_date < timezone.now():
-        #         return JsonResponse({"error": "Session has expired"}, status=403)
-        # except Session.DoesNotExist:
-        #     return JsonResponse({"error": "Session does not exists"}, status=403)
+        badgr_session_id = request.COOKIES.get('badgr_session_id')
+        try:
+            session = Session.objects.get(session_key=badgr_session_id)
+            if session.expire_date < timezone.now():
+                return JsonResponse({"error": "Session has expired"}, status=403)
+        except Session.DoesNotExist:
+            return JsonResponse({"error": "Session does not exists"}, status=403)
 
-        # session_data = session.get_decoded()
-        # user = BadgeUser.objects.filter(id=session_data["_auth_user_id"]).first()
-        # if not user:
-        #     return JsonResponse(data={'error': 'Invalid request'}, status=400)
-        print(f"\n user : {request.user}")
+        session_data = session.get_decoded()
+        user = BadgeUser.objects.filter(id=session_data["_auth_user_id"]).first()
+        if not user:
+            return JsonResponse(data={'error': 'Invalid request'}, status=400)
+        print(f"\n user : {user} | {request.user}")
         password = generate_random_password()
         user.set_password(password)
         user.save()
