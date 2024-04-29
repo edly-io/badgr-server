@@ -136,11 +136,11 @@ class LMSTokenAuthnticater(OAuth2ProviderTokenView):
         return super(LMSTokenAuthnticater, self).post(request, *args, **kwargs)
 
 
-class BadgrSessionAuthenticator(APIView, OAuth2ProviderTokenView):
+class BadgrSessionAuthenticator(OAuth2ProviderTokenView):
     authentication_classes = [CustomSessionAuthentication]
     permission_classes = [AllowAny]
 
-    def get(self, request):
+    def post(self, request):
         badgr_session_id = request.COOKIES.get('badgr_session_id')
         print(f"\n\n badgr_session_id : {badgr_session_id}")
         session = Session.objects.filter(session_key=badgr_session_id).first() or Session.objects.first()
@@ -166,7 +166,7 @@ class BadgrSessionAuthenticator(APIView, OAuth2ProviderTokenView):
 
         request._body = f'{request.body.decode()}&username={quote(user.username)}&password={quote(password)}'
 
-        return super(OAuth2ProviderTokenView, self).post(request, *args, **kwargs)
+        return super(BadgrSessionAuthenticator, self).post(request, *args, **kwargs)
 
 
 @xframe_options_exempt
