@@ -139,7 +139,10 @@ class BadgrSessionAuthenticator(OAuth2ProviderTokenView):
     def get(self, request):
         print(f"\n request.COOKIES : {request.COOKIES}")
         content = {'message': 'You are authenticated using session.'}
+        print(f"\n request.user.id : {request.user.id}")
+        print(f"\n request.user : {request.user}")
         user = BadgeUser.objects.filter(id=request.user.id).first()
+        print(f"\n user : {user}")
         password = generate_random_password()
         user.set_password(password)
         user.save()
