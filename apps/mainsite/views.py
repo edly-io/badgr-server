@@ -132,9 +132,10 @@ class LMSTokenAuthnticater(OAuth2ProviderTokenView):
 
         return super(LMSTokenAuthnticater, self).post(request, *args, **kwargs)
 
-class BadgrSessionAuthnticater(OAuth2ProviderTokenView):
+class BadgrSessionAuthenticator(OAuth2ProviderTokenView):
     authentication_classes = [SessionAuthentication]
     permission_classes = [IsAuthenticated]
+    renderer_classes = [JSONRenderer]  # Specify the default renderer
 
     def get(self, request):
         print(f"\n request.COOKIES : {request.COOKIES}")

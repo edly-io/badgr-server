@@ -26,7 +26,7 @@ from django.conf.urls.static import static
 
 from auth_backends.urls import oauth2_urlpatterns
 
-from .views import frontend_redirect, LMSTokenAuthnticater, BadgrSessionAuthnticater
+from .views import frontend_redirect, LMSTokenAuthnticater, BadgrSessionAuthenticator
 
 
 urlpatterns = oauth2_urlpatterns + [
@@ -50,7 +50,7 @@ urlpatterns = oauth2_urlpatterns + [
 
     url('frontend-redirect/', frontend_redirect, name='frontend_redirect'),
     url('authenticate_lms_token/', LMSTokenAuthnticater.as_view(), name='authenticate_lms_token'),
-    url('authenticate_through_badgr_session/', BadgrSessionAuthnticater.as_view(), name='authenticate_through_badgr_session'),
+    url('authenticate_through_badgr_session/', BadgrSessionAuthenticator.as_view(), name='authenticate_through_badgr_session'),
 
     # Badge Connect URLs
     url(r'^bcv1/manifest/(?P<domain>[^/]+)$', BadgeConnectManifestView.as_view(), name='badge_connect_manifest'),
