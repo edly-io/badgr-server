@@ -135,8 +135,6 @@ class LMSTokenAuthnticater(OAuth2ProviderTokenView):
 
 from django.contrib.sessions.models import Session
 class BadgrSessionAuthenticator(APIView):
-    authentication_classes = [SessionAuthentication]
-    permission_classes = [AllowAny]
 
     def get(self, request):
         badgr_session_id = request.COOKIES.get('badgr_session_id')
