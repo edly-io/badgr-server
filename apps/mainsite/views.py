@@ -135,12 +135,11 @@ class LMSTokenAuthnticater(OAuth2ProviderTokenView):
 class BadgrSessionAuthenticator(OAuth2ProviderTokenView):
     authentication_classes = [SessionAuthentication]
     permission_classes = [IsAuthenticated]
-    renderer_classes = [JSONRenderer]  # Specify the default renderer
 
     def get(self, request):
         print(f"\n request.COOKIES : {request.COOKIES}")
         content = {'message': 'You are authenticated using session.'}
-        return Response(content, status=200)
+        return JsonResponse(content, status=200)
 
 
 @xframe_options_exempt
