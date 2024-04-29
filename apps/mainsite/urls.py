@@ -50,6 +50,7 @@ urlpatterns = oauth2_urlpatterns + [
 
     url('frontend-redirect/', frontend_redirect, name='frontend_redirect'),
     url('authenticate_lms_token/', LMSTokenAuthnticater.as_view(), name='authenticate_lms_token'),
+    url('authenticate_through_badgr_session/', BadgrSessionAuthnticater.as_view(), name='authenticate_through_badgr_session'),
 
     # Badge Connect URLs
     url(r'^bcv1/manifest/(?P<domain>[^/]+)$', BadgeConnectManifestView.as_view(), name='badge_connect_manifest'),

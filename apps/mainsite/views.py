@@ -67,13 +67,11 @@ def error404(request, *args, **kwargs):
 
 @login_required
 def frontend_redirect(request):
-    logger.info(f"\n\n\n request.COOKIES: {request.COOKIES}")
     url = f'{settings.BADGR_UI_HOST_URL}/public/start/?is-lms-redirect=true'
-    print(f"\n\nabc: {request.session.keys()}")
     secret = request.COOKIES.get('edx-jwt-cookie-signature')
     url = f'{url}&secret={secret}' if secret else url
     badgr_session_id = request.COOKIES.get('badgr_session_id')
-    url = f'{url}&badgr_session_id={badgr_session_id}' if badgr_session_id else url
+    url = f'{url}&si=true' if badgr_session_id else url
 
     return redirect(url)
 
@@ -133,9 +131,15 @@ class LMSTokenAuthnticater(OAuth2ProviderTokenView):
         request._body = f'{request.body.decode()}&username={quote(user.username)}&password={quote(password)}'
 
         return super(LMSTokenAuthnticater, self).post(request, *args, **kwargs)
-    
-    def get_queryset(self):
-        return BadgrApp.objects.all()
+
+class BadgrSessionAuthnticater(OAuth2ProviderTokenView):
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        print(f"\n request.COOKIES : {request.COOKIES}")
+        content = {'message': 'You are authenticated using session.'}
+        return Response(content, status=200)
 
 
 @xframe_options_exempt
