@@ -136,7 +136,7 @@ class LMSTokenAuthnticater(OAuth2ProviderTokenView):
 
 
 class BadgrSessionAuthenticator(APIView):
-    authentication_classes = [SessionAuthentication]
+    authentication_classes = [CustomSessionAuthentication]
     permission_classes = [AllowAny]
 
     def get(self, request):
