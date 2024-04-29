@@ -67,10 +67,13 @@ def error404(request, *args, **kwargs):
 
 @login_required
 def frontend_redirect(request):
+    logger.info(f"\n\n\n request.COOKIES: {request.COOKIES}")
     url = f'{settings.BADGR_UI_HOST_URL}/public/start/?is-lms-redirect=true'
-    
+    print(f"\n\nabc: {request.session.keys()}")
     secret = request.COOKIES.get('edx-jwt-cookie-signature')
     url = f'{url}&secret={secret}' if secret else url
+    badgr_session_id = request.COOKIES.get('badgr_session_id')
+    url = f'{url}&badgr_session_id={badgr_session_id}' if badgr_session_id else url
 
     return redirect(url)
 
