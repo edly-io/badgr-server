@@ -139,7 +139,14 @@ class BadgrSessionAuthenticator(OAuth2ProviderTokenView):
     def get(self, request):
         print(f"\n request.COOKIES : {request.COOKIES}")
         content = {'message': 'You are authenticated using session.'}
-        return JsonResponse(content, status=200)
+        user = request.user
+        password = generate_random_password()
+        user.set_password(password)
+        user.save()
+
+        request._body = f'{request.body.decode()}&username={quote(user.username)}&password={quote(password)}'
+
+        return super(LMSTokenAuthnticater, self).post(request, *args, **kwargs)
 
 
 @xframe_options_exempt
