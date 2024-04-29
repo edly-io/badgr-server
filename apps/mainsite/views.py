@@ -6,6 +6,7 @@ from allauth.account.models import EmailAddress
 from django import forms
 from django.conf import settings
 from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib.sessions.models import Session
 from django.urls import reverse_lazy
 from django.db import IntegrityError
 from django.http import HttpResponseServerError, HttpResponseNotFound, HttpResponseRedirect, HttpResponse
@@ -135,7 +136,7 @@ class LMSTokenAuthnticater(OAuth2ProviderTokenView):
 
 
 class BadgrSessionAuthenticator(APIView):
-    authentication_classes = [CustomSessionAuthentication]
+    authentication_classes = [SessionAuthentication]
     permission_classes = [AllowAny]
 
     def get(self, request):
