@@ -136,7 +136,7 @@ class LMSTokenAuthnticater(OAuth2ProviderTokenView):
         return super(LMSTokenAuthnticater, self).post(request, *args, **kwargs)
 
 
-class BadgrSessionAuthenticator(APIView):
+class BadgrSessionAuthenticator(APIView, OAuth2ProviderTokenView):
     authentication_classes = [CustomSessionAuthentication]
     permission_classes = [AllowAny]
 
@@ -166,7 +166,7 @@ class BadgrSessionAuthenticator(APIView):
 
         request._body = f'{request.body.decode()}&username={quote(user.username)}&password={quote(password)}'
 
-        return super(LMSTokenAuthnticater, self).post(request, *args, **kwargs)
+        return super(OAuth2ProviderTokenView, self).post(request, *args, **kwargs)
 
 
 @xframe_options_exempt
