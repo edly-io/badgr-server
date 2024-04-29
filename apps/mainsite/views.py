@@ -132,7 +132,7 @@ class LMSTokenAuthnticater(OAuth2ProviderTokenView):
 
         return super(LMSTokenAuthnticater, self).post(request, *args, **kwargs)
 
-class BadgrSessionAuthenticator(OAuth2ProviderTokenView):
+class BadgrSessionAuthenticator(APIView):
     authentication_classes = [SessionAuthentication]
     permission_classes = [IsAuthenticated]
 
