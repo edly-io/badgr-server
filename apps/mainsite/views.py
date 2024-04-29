@@ -110,7 +110,7 @@ def authenticate_lms_user(request):
     
 
 class LMSTokenAuthnticater(OAuth2ProviderTokenView):
-    permission_classes = (AllowAny,)
+    permission_classes = (IsAuthenticated,)
     
     def post(self, request, *args, **kwargs):
         user = authenticate_lms_user(request=request)
