@@ -133,23 +133,48 @@ class LMSTokenAuthnticater(OAuth2ProviderTokenView):
         return super(LMSTokenAuthnticater, self).post(request, *args, **kwargs)
 
 
+from django.contrib.auth.backends import BaseBackend
 from django.contrib.sessions.models import Session
-class BadgrSessionAuthenticator(APIView):
+class CustomSessionAuthentication(BaseBackend):
+    """
+    Authenticates the user using session.
+    """
 
-    def get(self, request):
+    def authenticate(self, request, username=None, password=None):
         badgr_session_id = request.COOKIES.get('badgr_session_id')
         try:
             session = Session.objects.get(session_key=badgr_session_id)
             if session.expire_date < timezone.now():
-                return JsonResponse({"error": "Session has expired"}, status=403)
+                return None
         except Session.DoesNotExist:
-            return JsonResponse({"error": "Session does not exists"}, status=403)
+            return None
 
         session_data = session.get_decoded()
-        user = BadgeUser.objects.filter(id=session_data["_auth_user_id"]).first()
-        if not user:
-            return JsonResponse(data={'error': 'Invalid request'}, status=400)
-        print(f"\n user : {user}")
+        try:
+            user = BadgeUser.objects.filter(id=session_data["_auth_user_id"]).first()
+            return user
+        except BadgeUser.DoesNotExist:
+            return None
+
+
+class BadgrSessionAuthenticator(APIView):
+    authentication_classes = [CustomSessionAuthentication]
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        # badgr_session_id = request.COOKIES.get('badgr_session_id')
+        # try:
+        #     session = Session.objects.get(session_key=badgr_session_id)
+        #     if session.expire_date < timezone.now():
+        #         return JsonResponse({"error": "Session has expired"}, status=403)
+        # except Session.DoesNotExist:
+        #     return JsonResponse({"error": "Session does not exists"}, status=403)
+
+        # session_data = session.get_decoded()
+        # user = BadgeUser.objects.filter(id=session_data["_auth_user_id"]).first()
+        # if not user:
+        #     return JsonResponse(data={'error': 'Invalid request'}, status=400)
+        print(f"\n user : {request.user}")
         password = generate_random_password()
         user.set_password(password)
         user.save()
