@@ -164,9 +164,18 @@ class BadgrSessionAuthenticator(APIView):
         user.set_password(password)
         user.save()
 
-        request._body = f'{request.body.decode()}&username={quote(user.username)}&password={quote(password)}'
-
-        return super(BadgrSessionAuthenticator, self).post(request, *args, **kwargs)
+        url = f'{settings.BADGR_HOST_URL}/o/token'
+        form_data = {
+            'username': user.username,
+            'password': password,
+            'client_id': 'public',
+            'grant_type': 'password'
+        }
+        # headers = {'Cookie': 'openedx-language-preference=en'}
+        
+        response = requests.post(url, data=form_data, headers=headers)
+        # response.raise_for_status()  # Raise an exception for any HTTP error
+        return response.json()
 
 
 @xframe_options_exempt

@@ -1,5 +1,5 @@
 # Django stuff
-django>=2.2,<2.2.99
+Django>=2.2,<2.2.99
 semver==2.6.0
 pytz==2017.2
 edx-auth-backends==4.2.0
