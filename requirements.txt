@@ -1,5 +1,5 @@
 # Django stuff
-Django>=2.2,<2.2.99
+django>=2.2,<2.2.99
 semver==2.6.0
 pytz==2017.2
 edx-auth-backends==4.2.0
@@ -10,7 +10,6 @@ python-dateutil==2.7.5
 # mysql database
 mysqlclient==1.4.6
 
-django==4.2.11
 django-storages==1.9.1
 python-resize-image==1.1.19
 
