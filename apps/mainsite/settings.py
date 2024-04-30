@@ -62,8 +62,8 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
-    'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'oauth2_provider.middleware.OAuth2TokenMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -158,6 +158,9 @@ AUTHENTICATION_BACKENDS = [
 
     # `allauth` specific authentication methods, such as login by e-mail
     "badgeuser.backends.CachedAuthenticationBackend",
+
+     # `allauth` specific authentication methods, such as authenticate by session
+    "badgeuser.backends.CustomSessionAuthentication",
 
     'auth_backends.backends.EdXOAuth2',
     'django.contrib.auth.backends.ModelBackend',
@@ -517,4 +520,5 @@ SOCIAL_AUTH_EDX_OAUTH2_LOGOUT_URL = ''
 
 
 LMS_HOST_URL = ''
+BADGR_HOST_URL = ''
 BADGR_UI_HOST_URL = ''

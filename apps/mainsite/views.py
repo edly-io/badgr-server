@@ -6,7 +6,9 @@ from allauth.account.models import EmailAddress
 from django import forms
 from django.conf import settings
 from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib.sessions.models import Session
 from django.urls import reverse_lazy
+from django.utils import timezone
 from django.db import IntegrityError
 from django.http import HttpResponseServerError, HttpResponseNotFound, HttpResponseRedirect, HttpResponse
 from django.shortcuts import redirect
@@ -44,6 +46,7 @@ from .utils import generate_random_password
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
 from badgeuser.models import BadgeUser
+from badgeuser.backends import CustomSessionAuthentication
 
 
 import logging;
@@ -68,9 +71,10 @@ def error404(request, *args, **kwargs):
 @login_required
 def frontend_redirect(request):
     url = f'{settings.BADGR_UI_HOST_URL}/public/start/?is-lms-redirect=true'
-    
     secret = request.COOKIES.get('edx-jwt-cookie-signature')
     url = f'{url}&secret={secret}' if secret else url
+    badgr_session_id = request.COOKIES.get('badgr_session_id')
+    url = f'{url}&si={badgr_session_id}' if badgr_session_id else url
 
     return redirect(url)
 
@@ -130,9 +134,48 @@ class LMSTokenAuthnticater(OAuth2ProviderTokenView):
         request._body = f'{request.body.decode()}&username={quote(user.username)}&password={quote(password)}'
 
         return super(LMSTokenAuthnticater, self).post(request, *args, **kwargs)
-    
-    def get_queryset(self):
-        return BadgrApp.objects.all()
+
+
+class BadgrSessionAuthenticator(APIView):
+    authentication_classes = [CustomSessionAuthentication]
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        badgr_session_id = request.data.get('badgr_session_id')
+        print(f"\n\n badgr_session_id : {badgr_session_id}")
+        session = Session.objects.filter(session_key=badgr_session_id).first()
+        print(f"\n\n session : {session}")
+        if not session:
+            print(f"\n\n Session.DoesNotExist ::::::")
+            return JsonResponse({"error": "Session does not exists"}, status=403)
+
+        if session.expire_date < timezone.now():
+            print(f"\n\n session.expire_date < timezone.now() : {True}")
+            return JsonResponse({"error": "Session has expired"}, status=403)
+
+        session_data = session.get_decoded()
+        print(f"\n\n session_data : {session_data}")
+        user = BadgeUser.objects.filter(id=session_data["_auth_user_id"]).first()
+        print(f"\n\n user : {user}")
+        if not user:
+            return JsonResponse(data={'error': 'Invalid request'}, status=400)
+        print(f"\n user : {user} | {request.user}")
+        password = generate_random_password()
+        user.set_password(password)
+        user.save()
+
+        url = f'{settings.BADGR_HOST_URL}/o/token'
+        form_data = {
+            'username': user.username,
+            'password': password,
+            'client_id': 'public',
+            'grant_type': 'password'
+        }
+        # headers = {'Cookie': 'openedx-language-preference=en'}
+        
+        response = requests.post(url, data=form_data)
+        # response.raise_for_status()  # Raise an exception for any HTTP error
+        return JsonResponse(data=response.json(), status=200)
 
 
 @xframe_options_exempt
