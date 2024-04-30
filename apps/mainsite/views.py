@@ -173,7 +173,7 @@ class BadgrSessionAuthenticator(APIView):
         }
         # headers = {'Cookie': 'openedx-language-preference=en'}
         
-        response = requests.post(url, data=form_data, headers=headers)
+        response = requests.post(url, data=form_data)
         # response.raise_for_status()  # Raise an exception for any HTTP error
         return response.json()
 
