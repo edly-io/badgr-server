@@ -175,7 +175,7 @@ class BadgrSessionAuthenticator(APIView):
         
         response = requests.post(url, data=form_data)
         # response.raise_for_status()  # Raise an exception for any HTTP error
-        return response.json()
+        return JsonResponse(data=response.json(), status=200)
 
 
 @xframe_options_exempt
