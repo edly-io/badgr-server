@@ -142,7 +142,7 @@ class BadgrSessionAuthenticator(APIView):
 
     def post(self, request):
         print(f"\n\n request.body : {request.body}")
-        badgr_session_id = request.body.get('badgr_session_id')
+        badgr_session_id = request.data.get('badgr_session_id')
         print(f"\n\n badgr_session_id : {badgr_session_id}")
         session = Session.objects.filter(session_key=badgr_session_id).first()
         print(f"\n\n session : {session}")
