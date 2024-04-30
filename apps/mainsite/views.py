@@ -136,14 +136,15 @@ class LMSTokenAuthnticater(OAuth2ProviderTokenView):
         return super(LMSTokenAuthnticater, self).post(request, *args, **kwargs)
 
 
-class BadgrSessionAuthenticator(OAuth2ProviderTokenView):
-    authentication_classes = [CustomSessionAuthentication]
+class BadgrSessionAuthenticator(APIView):
+    # authentication_classes = [CustomSessionAuthentication]
     permission_classes = [AllowAny]
 
     def post(self, request):
-        badgr_session_id = request.COOKIES.get('badgr_session_id')
+        print(f"\n\n request.body : {request.body}")
+        badgr_session_id = request.body.get('badgr_session_id')
         print(f"\n\n badgr_session_id : {badgr_session_id}")
-        session = Session.objects.filter(session_key=badgr_session_id).first() or Session.objects.first()
+        session = Session.objects.filter(session_key=badgr_session_id).first()
         print(f"\n\n session : {session}")
         if not session:
             print(f"\n\n Session.DoesNotExist ::::::")
