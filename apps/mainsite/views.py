@@ -70,7 +70,14 @@ def frontend_redirect(request):
     url = f'{settings.BADGR_UI_HOST_URL}/public/start/?is-lms-redirect=true'
     
     secret = request.COOKIES.get('edx-jwt-cookie-signature')
-    url = f'{url}&secret={secret}' if secret else url
+    if secret:
+        url = f'{url}&secret={secret}' if secret else url
+    else:
+        cookie_url = f'{settings.LMS_HOST_URL}/login_refresh'
+        response = requests.post(cookie_url, cookies=request.COOKIES)
+        secret = response.cookies.get('edx-jwt-cookie-signature')
+        payload = response.cookies.get('edx-jwt-cookie-header-payload')
+        url = f'{url}&secret={secret}&payload={payload}'
 
     return redirect(url)
 
