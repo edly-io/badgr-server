@@ -536,5 +536,20 @@ SOCIAL_AUTH_EDX_OAUTH2_PUBLIC_URL_ROOT = ''
 SOCIAL_AUTH_EDX_OAUTH2_LOGOUT_URL = ''
 
 
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+    'use-jwt-cookie',
+]
+
+CORS_ALLOW_CREDENTIALS = True
+
 LMS_HOST_URL = ''
 BADGR_UI_HOST_URL = ''
