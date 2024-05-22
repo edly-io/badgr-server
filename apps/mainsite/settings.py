@@ -58,11 +58,14 @@ INSTALLED_APPS = [
     'composition',
 
     'social_django',
+
+    'csrf.apps.CsrfAppConfig',
 ]
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'edx_rest_framework_extensions.auth.jwt.middleware.JwtAuthCookieMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'oauth2_provider.middleware.OAuth2TokenMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -359,6 +362,7 @@ REST_FRAMEWORK = {
         'rest_framework.renderers.BrowsableAPIRenderer',
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
+        'edx_rest_framework_extensions.auth.jwt.authentication.JwtAuthentication',
         'mainsite.authentication.BadgrOAuth2Authentication',
         'mainsite.authentication.LoggedLegacyTokenAuthentication',
         'entity.authentication.ExplicitCSRFSessionAuthentication',
@@ -371,6 +375,22 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 100,
 }
 
+
+JWT_AUTH = {
+    "JWT_ISSUER": [
+        {"AUDIENCE": "SET-ME-PLEASE", "ISSUER": "http://127.0.0.1:8000/oauth2", "SECRET_KEY": "SET-ME-PLEASE"}
+    ],
+    "JWT_ALGORITHM": "HS256",
+    "JWT_VERIFY_EXPIRATION": True,
+    "JWT_PAYLOAD_GET_USERNAME_HANDLER": lambda d: d.get("preferred_username"),
+    "JWT_LEEWAY": 1,
+    "JWT_DECODE_HANDLER": "edx_rest_framework_extensions.auth.jwt.decoder.jwt_decode_handler",
+    "JWT_PUBLIC_SIGNING_JWK_SET": None,
+    "JWT_AUTH_COOKIE": "edx-jwt-cookie",
+    "JWT_AUTH_COOKIE_HEADER_PAYLOAD": "edx-jwt-cookie-header-payload",
+    "JWT_AUTH_COOKIE_SIGNATURE": "edx-jwt-cookie-signature",
+    "JWT_AUTH_HEADER_PREFIX": "JWT",
+}
 
 ##
 #

@@ -109,3 +109,5 @@ importlib-resources==5.10.0 # Normally v6.0.1 is installed but Django is not wor
 
 geopy==2.2.0
 uwsgi
+
+edx-drf-extensions==8.0.0
