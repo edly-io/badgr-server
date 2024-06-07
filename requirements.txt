@@ -2,7 +2,7 @@
 Django==3.2
 semver==2.6.0
 pytz==2017.2
-edx-auth-backends
+edx-auth-backends==4.3.0
 # PIL support
 Pillow==8.2.0
 python-dateutil==2.7.5

@@ -58,8 +58,6 @@ INSTALLED_APPS = [
     # deprecated
     'composition',
 
-    'social_django',
-
     'csrf.apps.CsrfAppConfig',
 ]
 
